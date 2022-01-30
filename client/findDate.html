@@ -25,8 +25,8 @@
 <body>
 
     <div class="main">
-        <div class="mainContent"><button class="btnMain">Купить путевку</button></div>
-        <div class="mainContent"><button class="btnMain">Расписание рейсов</button></div>
+        <div class="mainContent"><a href="index.html">Купить путевку</a></div>
+        <div class="mainContent"><a href="findDate">Узнать дату вылета</a></div>
         <div class="mainContent"><button class="btnMain">О нас</button></div>
         <div class="mainContent"><button class="btnMain">Контакты</button></div>
     </div>
@@ -37,15 +37,70 @@
  
     <div class="form">
         <form id="form" action="/findDate">
+
             <div class="mb-3" id ="inputForm">
                 <label for="name" class="form-label"></label>
                 <input type="text" class="name" id="name" name="name" placeholder="Имя" required>
             </div>
-            <button class="btn-modal" type="submit" value="submit">Узнать дату вылета</button>
+
+            <button class="btn-modal" type="submit" >Узнать дату вылета</button>
         </form>
+
+   
+    
+        <form id="form2" action="/updateDate">
+
+            <div class="mb-3" id ="inputForm">
+                <input type="date" class="password" id="date" name="date">
+            </div>
+            <button class="btn-modal" type="submit">Изменить</button>
+
+        </form>
+
     </div>
 
 
+
+
+
+
+
+
+    <script>
+        const dateElem = document.getElementById('date')
+        const form = document.getElementById('form')
+        const form2 = document.getElementById('form2')
+
+        form.onsubmit = async function(event) {
+            event.preventDefault()
+            const response = await fetch(`/findDate?name=${form[0].value}`)
+            if (response.ok) {
+                const { date } = await response.json()
+                console.log(form[0].value)
+                form2[0].value = new Date(date).toLocaleDateString("fr-CA")
+
+                dateElem.val(new Date(date).toLocaleDateString())
+                                      
+            }
+        }
+    </script>
+
+    <script> 
+        let form2 = document.getElementById('form2')
+        form2.onsubmit = function (event) {
+           event.preventDefault() //отменяет поведение кнопки 
+           const date = form2[0].value //собираем value
+           fetch('/updateDate', {
+               method:'PATCH',      //ставим метод из роута
+               header:{
+                 'Content-Type': 'application/json'  //формат кодировки
+               },
+               body: JSON.stringify({
+                   date
+               })
+           })
+        }
+    </script>
 
 
 

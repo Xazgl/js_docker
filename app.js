@@ -1,4 +1,3 @@
-// @ts-check
 require('dotenv').config()
 // подключение express
 const express = require('express');
@@ -34,13 +33,30 @@ app.post("/ticket", multer().none(), async function (request, response) {
     response.send(dbTicket);
 });
 
-app.get("/findDate",async function (request, response) {
-    const { name } = request.body
-   const answer =   UserModel.findOne({where: {firstName: name}})
-   .then(answer=>{
-    if(!answer) return;
-    console.log(answer.dateTicket);
-}).catch(err=>console.log(err));
+app.get("/findDate", async function (request, response) {
+    const { name } = request.query
+    const answer = UserModel.findOne({ where: { firstName: name } })
+        .then(answer => {
+            if (!answer) return;
+            console.log(answer.dateTicket);
+            response.send({date: answer.dateTicket})
+        }).catch(err => console.log(err));
+})
+
+
+app.patch("/updateDate", async function (request, response) {
+    const { date }  = request.body
+    const newDat = await UserModel.update ({ 
+        dateTicket: date
+    })
+    response.send(newDat)
+});
+
+
+
+
+
+
 
 
 
